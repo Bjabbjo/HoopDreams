@@ -1,14 +1,16 @@
 const { ApolloServer } = require('apollo-server');
+const typeDefs = require("./schema"); // routes to index.js by default
+const resolvers = {}; // Setup later (resolvers)
+console.log(typeDefs);
 
 // documentation: https://basketball-fields.herokuapp.com/docs
 const url = "https://basketball-fields.herokuapp.com/"
 
 const server = new ApolloServer({
-    /*
-        Add typeDefs
-        Add resolvers
-    */
+    typeDefs,
+    resolvers
 });
 
-server.listen()
+server
+    .listen() // Default port 4000 (http://localhost:4000)
     .then(({ url }) => console.log(`GraphQL Service is running on ${ url }`));
