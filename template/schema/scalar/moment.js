@@ -1,6 +1,7 @@
 const {GraphQLScalarType, Kind} = require("graphql");
 const moment = require("moment");
 moment.locale("is");
+moment.format("llll");
 
 module.exports = {
     Moment: new GraphQLScalarType({
@@ -18,9 +19,7 @@ module.exports = {
         },
         serialize(value){
             if (moment(value).isValid()){
-                const date = new Date(value)
-                const formattedDate = moment(date).format('llll');
-
+                const formattedDate = moment(value);
                 return formattedDate.toISOString()
             }
         }
