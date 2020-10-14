@@ -9,8 +9,8 @@ module.exports = {
         allBasketballFields: () => db.BasketballFields.find({}),
         allPickupGames: () => db.PickupGames.find({}),
         allPlayers: () => db.Players.find({}),
-        basketballField: () => ({}),
-        pickupGame: () => ({}),
-        player: () => ({})
+        basketballField: (id) => db.BasketballFields.findById(id),
+        pickupGame: (id) => db.PickupGames.findById(id),
+        player: (id) => db.Players.findById(id)
     }
 }
