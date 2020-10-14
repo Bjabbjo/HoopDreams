@@ -22,6 +22,7 @@ module.exports = {
                 const formattedDate = moment(value);
                 return formattedDate.toISOString()
             }
+            return null
         }
     })
 }
