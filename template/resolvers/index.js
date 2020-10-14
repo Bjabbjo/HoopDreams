@@ -6,9 +6,9 @@ const db = require("../data/db");
 
 module.exports = {
     Query: {
-        allBasketballFields: () => [],
-        allPickupGames: () => [],
-        allPlayers: () => db.Players,
+        allBasketballFields: () => db.BasketballFields.find({}),
+        allPickupGames: () => db.PickupGames.find({}),
+        allPlayers: () => db.Players.find({}),
         basketballField: () => ({}),
         pickupGame: () => ({}),
         player: () => ({})
