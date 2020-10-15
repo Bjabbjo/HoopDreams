@@ -14,7 +14,6 @@ module.exports = {
         name: "Moment",
         description: "Moment Scalar Type",
 
-
         parseValue(value){
             return returnOnError(() => value == null ? null : new Date(value), null);
         },
@@ -26,8 +25,9 @@ module.exports = {
         },
         serialize(value){
             if (moment(value).isValid()){
-                const formattedDate = moment(value).format("llll").locale("is");
-                return formattedDate.toISOString()
+                const ret = new Date(value);
+                //const formattedDate = moment(value).format("llll").locale("is");
+                return ret.toISOString()
             }
             return null
         }
