@@ -13,7 +13,14 @@ module.exports = {
     Moment: new GraphQLScalarType({
         name: "Moment",
         description: "Moment Scalar Type",
-
+        serialize(value){
+            if (moment(value).isValid()){
+                const ret = new Date(value);
+                //const formattedDate = moment(value).format("llll").locale("is");
+                return ret.toISOString()
+            }
+            return null
+        },
         parseValue(value){
             return returnOnError(() => value == null ? null : new Date(value), null);
         },
@@ -22,14 +29,7 @@ module.exports = {
                 return parseInt(ast.value, 10)
             }
             return null
-        },
-        serialize(value){
-            if (moment(value).isValid()){
-                const ret = new Date(value);
-                //const formattedDate = moment(value).format("llll").locale("is");
-                return ret.toISOString()
-            }
-            return null
         }
+        
     })
 }

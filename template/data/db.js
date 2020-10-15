@@ -15,13 +15,6 @@ const PickupGames = connection.model('PickupGames', pickupGamesSchema, 'PickupGa
 const Players = connection.model('Players', playerSchema, 'Players');
 
 
-const globalTryCatch = async cb => {
-    try {
-        return await cb();
-    } catch(err) {
-        return err;
-    }
-}
 
 const getAllBasketballFields = async() => {
     const result = await new Promise(function(res, rej) {
@@ -48,7 +41,7 @@ const getBasketballFieldById = async(id) => {
 module.exports = {
     connection,
     getAllBasketballFields,
-    //getBasketballFieldById,
+    getBasketballFieldById,
     PickupGames,
     Players
 }

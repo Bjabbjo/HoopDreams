@@ -1,4 +1,4 @@
-const moment = require("./moment");
+//const moment = require("../../resolvers/moment");
 module.exports = `
-    ${moment}
+    scalar Moment
 `;
