@@ -1,10 +1,9 @@
-const db = require("../data/db");
-const mutations = require("../schema/mutations");
+const fieldServices = require("../services/basketballFieldService");
 
 module.exports = {
     queries: {
-        allBasketballFields: () => { return db.getAllBasketballFields() },
-        basketballField: (parent, args) => { return db.getBasketballFieldById(args.id) }
+        allBasketballFields: () => { return fieldServices.getAllBasketballFields() },
+        basketballField: (parent, args) => { return fieldServices.getBasketballFieldById(args.id) }
     },
 
     mutations: {
