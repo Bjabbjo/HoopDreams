@@ -30,42 +30,19 @@ const getAllBasketballFields = async() => {
             res(body)
         });
     })
-    console.log(result)
     return JSON.parse(result)
 }
 
-
-
-
-/*const getAllBasketballFields = async () => {
-    return await globalTryCatch(async () => 
-    {
-        let result = [];
-        await request({
-            uri: "https://basketball-fields.herokuapp.com/",
-            method: "GET"
-        })
-        .then(body => {
-            result = JSON.parse(body);
+const getBasketballFieldById = async(id) => {
+    const result = await new Promise(function(res, rej) {
+        request("https://basketball-fields.herokuapp.com/api/basketball-fields" + toString(id), function(error, response, body) {
+            if(error) {return rej(error)}
+            res(body)
         });
-    return result;
-    });
+    })
+    console.log(result)
+    return JSON.parse(result)
 }
-
-const getBasketballFieldById = async (id) => {
-    return await globalTryCatch(async () => 
-    {
-        let result = [];
-        await request({
-            uri: "https://basketball-fields.herokuapp.com/" + toString(id),
-            method: "GET"
-        })
-        .then(body => {
-            result = JSON.parse(body);
-        })
-        return result;
-    });
-}*/
 
 
 module.exports = {
