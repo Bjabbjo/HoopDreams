@@ -3,7 +3,7 @@ const db = require("../data/db");
 module.exports = {
     queries: {
         allPlayers: () => db.Players.find({}),
-        player: (parent, args) => db.Players.findById(args.id),
+        player: (parent, args, context) => db.Players.findById(args.id),
     },
 
     mutations: {
