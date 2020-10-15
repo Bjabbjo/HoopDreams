@@ -11,12 +11,12 @@ module.exports = {
         parseValue(value){
             return new Date(value)
         },
-        parseLiteral(ast){
+        /*parseLiteral(ast){
             if (ast.kind === Kind.INT) {
                 return parseInt(ast.value, 10)
             }
             return null
-        },
+        },*/
         serialize(value){
             if (moment(value).isValid()){
                 const formattedDate = moment(value);

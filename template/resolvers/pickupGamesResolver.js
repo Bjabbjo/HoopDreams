@@ -1,7 +1,7 @@
 const db = require("../data/db");
 
 module.exports = {
-    queries = {
+    queries: {
         allPickupGames: () => db.PickupGames.find({}),
         pickupGame: (id) => db.PickupGames.findById(id),
     }
