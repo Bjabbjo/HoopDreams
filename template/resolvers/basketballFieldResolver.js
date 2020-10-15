@@ -3,7 +3,12 @@ const mutations = require("../schema/mutations");
 
 module.exports = {
     queries: {
-        allBasketballFields: () => db.getAllBasketballFields(),
+        allBasketballFields: () => { return db.getAllBasketballFields() },
         basketballField: (parent, args) => { return db.getBasketballFieldById(args.id) }
+    },
+
+    mutations: {
+
     }
-    };
+
+};

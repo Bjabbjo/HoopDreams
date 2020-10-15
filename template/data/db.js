@@ -23,11 +23,11 @@ const getAllBasketballFields = async() => {
             res(body)
         });
     })
+    console.log(result);
     return JSON.parse(result)
 }
 
 const getBasketballFieldById = async id => {
-    console.log(id);
     const result = await new Promise(function(res, rej) {
         request("https://basketball-fields.herokuapp.com/api/basketball-fields/" + id, function(error, response, body) {
             if(error) {return rej(error)}
