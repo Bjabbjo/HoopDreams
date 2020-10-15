@@ -4,6 +4,6 @@ module.exports =
 {
     queries: {
         allPickupGames: () => db.PickupGames.find({}),
-        pickupGame: (args) => db.PickupGames.findById(args.id),
+        pickupGame: (parent, args) => db.PickupGames.findById(args.id),
     }
 };
