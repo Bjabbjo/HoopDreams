@@ -1,16 +1,13 @@
-const basketballField = require("../schema/types/basketballField");
-const pickupGame = require("../schema/types/pickupGame");
-const player = require("../schema/types/player");
-
+const basketballFieldResolver = require("./basketballFieldResolver");
 const db = require("../data/db");
+const basketballFieldResolver = require("./basketballFieldResolver");
+const pickupGamesResolver = require("./pickupGamesResolver");
+const playerResolver = require("./playerResolver");
 
 module.exports = {
     Query: {
-        allBasketballFields: () => db.BasketballFields.find({}),
-        allPickupGames: () => db.PickupGames.find({}),
-        allPlayers: () => db.Players.find({}),
-        basketballField: (id) => db.BasketballFields.findById(id),
-        pickupGame: (id) => db.PickupGames.findById(id),
-        player: (id) => db.Players.findById(id)
+        ...basketballFieldResolver.queries,
+        ...pickupGamesResolver.queries,
+        ...playerResolver.queries
     }
 }
