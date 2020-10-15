@@ -1,7 +1,7 @@
 module.exports = `
     input pickupGameInput {
-        start: String!
-        end: String!
+        start: Moment!
+        end: Moment!
         basketballFieldId: String!
         hostId: String!
     }
