@@ -6,4 +6,5 @@ module.exports = new Schema({
     location: {type: String, required: true},
     registeredPlayers: {type: Array, required: true},
     host: {type: String, required: true}
-});
+},
+{ versionKey: false });

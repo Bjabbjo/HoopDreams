@@ -15,13 +15,9 @@ module.exports = {
             //const id = args.input.name.toLowerCase().replace(' ','-');
             //const playedGames = [];
             const newPlayer = {
-                id: 1,
                 name: args.input.name,
-                playedGames: []
             };
-            console.log(newPlayer);
-            db.Players.create(newPlayer);
-            return newPlayer;
+            return context.db.Players.create(newPlayer);
         }
 
         // updatePlayer: (parent, args, context) => {
