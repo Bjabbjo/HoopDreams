@@ -1,13 +1,16 @@
-const db = require("../data/db");
+//const db = require("../data/db");
 
 module.exports = 
 {
     queries: {
-        allPickupGames: () => db.PickupGames.find({}),
-        pickupGame: (parent, args, context) => db.PickupGames.findById(args.id),
+        allPickupGames: (parent, args, context) => { return context.db.PickupGames.find({}) },
+        pickupGame: (parent, args, context) => { return context.db.PickupGames.findById(args.id) }
     },
 
     mutations: {
-
+        /*createPickupGame,
+        removePickupGame,
+        addPlayerToPickupGame,
+        removePlayerFromPickupGame*/
     }
 };

@@ -2,10 +2,15 @@ const { ApolloServer } = require('apollo-server');
 const typeDefs = require("./schema"); // routes to index.js by default
 const resolvers = require("./resolvers"); // Setup later (resolvers)
 
+const database = require("./data/db");
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+
+    context: () => {
+        return { db: database }
+    }
 });
 
 server
