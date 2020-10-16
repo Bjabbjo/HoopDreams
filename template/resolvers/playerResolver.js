@@ -9,24 +9,27 @@ module.exports = {
     mutations: {
 
         createPlayer: (parent, args, context) => {
+            
             const newPlayer = {
+                id,
                 name: args.input.name,
                 playedGames: []
-            }
-            return context.db.Players.create(newPlayer)
+            };
+            context.db.Players.push(newPlayer);
+            return newPlayer;
         },
 
-        updatePlayer: (parent, args, context) => {
-            const changePlayer = {
-                name: args.input.player,
-                playedGames: args.input.playedGames
-            }
-            return context.db.Players.push(changePlayer)
-        },
+        // updatePlayer: (parent, args, context) => {
+        //     const changePlayer = {
+        //         name = args.input.player,
+        //         playedGames = args.input.playedGames
+        //     }
+        //     return context.db.Players.push(changePlayer)
+        // },
 
-        removePlayer: (parent, args, context) => {
-            context.db.PickupGames = context.db.PickupGames.filter(c => x.id != args.id);
-            return true
-        }
+        // removePlayer: (parent, args, context) => {
+        //     context.db.PickupGames = context.db.PickupGames.filter(c => x.id != args.id);
+        //     return true
+        // }
     }
 }
