@@ -3,13 +3,17 @@ const typeDefs = require("./schema"); // routes to index.js by default
 const resolvers = require("./resolvers"); // Setup later (resolvers)
 
 const database = require("./data/db");
+const basketballFieldService = require('./services/basketballFieldService');
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
 
     context: () => {
-        return { db: database }
+        return { 
+            db: database,
+            fieldServices: basketballFieldService
+         }
     }
 });
 
