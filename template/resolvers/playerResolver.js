@@ -9,15 +9,17 @@ module.exports = {
     mutations: {
 
         createPlayer: (parent, args, context) => {
-            
+            const id = args.input.name.toLowerCase().replace(' ','-');
+            const playedGames = [];
             const newPlayer = {
                 id,
                 name: args.input.name,
-                playedGames: []
+                playedGames
             };
-            context.db.Players.push(newPlayer);
+            console.log(newPlayer);
+            //db.player.push(newPlayer);
             return newPlayer;
-        },
+        }
 
         // updatePlayer: (parent, args, context) => {
         //     const changePlayer = {
