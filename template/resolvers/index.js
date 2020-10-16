@@ -12,8 +12,8 @@ module.exports = {
         ...playerResolver.queries
     },
     Mutation: {
-        ...playerMutations,
-        ...pickupGameMutations
+        ...playerResolver.Mutation,
+        ...pickupGamesResolver.Mutation
     },
     Moment: {
         ...moment
