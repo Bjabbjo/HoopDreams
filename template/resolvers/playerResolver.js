@@ -17,7 +17,7 @@ module.exports = {
     },
 
     queries: {
-        allPlayers: (parent, args, context) => { return context.db.Players.find({})},
+        allPlayers: (parent, args, context) => {return context.db.Players.find({})},
         player: (parent, args, context) => { 
             const player = context.db.Players.findById(args.id);
             return player
