@@ -7,17 +7,16 @@ module.exports = {
     },
 
     mutations: {
-
         createPlayer: (parent, args, context) => {
             const id = args.input.name.toLowerCase().replace(' ','-');
-            const playedGames = [];
+            const playedGames = [ ];
             const newPlayer = {
                 id,
                 name: args.input.name,
                 playedGames
             };
             console.log(newPlayer);
-            //db.player.push(newPlayer);
+            db.Players.create(newPlayer);
             return newPlayer;
         }
 
