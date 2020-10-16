@@ -10,6 +10,7 @@ module.exports = {
         ...playerResolver.queries
     },
     Mutation: {
+        ...playerResolver.mutations
 
     },
     Moment: {
