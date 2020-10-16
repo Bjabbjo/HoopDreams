@@ -1,20 +1,24 @@
-const db = require("../data/db");
 
 module.exports = {
     queries: {
         allPlayers: (parent, args, context) => { return context.db.Players.find({})},
-        player: (parent, args, context) => context.db.Players.findById(args.id),
+        player: (parent, args, context) => { 
+            const player = context.db.Players.findById(args.id)
+            console.log(player.playedGames);
+            if (player.playedGames == undefined) { player.playedGames = []; }
+            return player
+        },
     },
 
     mutations: {
 
         createPlayer: (parent, args, context) => {
-            const id = args.input.name.toLowerCase().replace(' ','-');
-            const playedGames = [];
+            //const id = args.input.name.toLowerCase().replace(' ','-');
+            //const playedGames = [];
             const newPlayer = {
-                id,
+                id: 1,
                 name: args.input.name,
-                playedGames
+                playedGames: []
             };
             console.log(newPlayer);
             //db.player.push(newPlayer);

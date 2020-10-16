@@ -1,4 +1,3 @@
-const { path } = require("../data/schemas/player");
 
 module.exports = 
 {
@@ -48,6 +47,7 @@ module.exports =
                 return context.db.PickupGames.create(newPickupGame)
             }
         },
+        
         removePickupGame: (parent, args, context) => {
             context.db.PickupGames = context.db.PickupGames.find(x => x.id == args.id).remove().exec();
             return true
