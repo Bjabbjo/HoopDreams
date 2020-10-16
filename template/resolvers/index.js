@@ -6,6 +6,9 @@ const playerMutations = require("../schema/mutations/playerMutations");
 //const pickupGameMutations = require("../schema/mutations/pickupGameMutations");
 
 module.exports = {
+    Player: {
+        ...playerResolver.Player
+    },
     Query: {
         ...basketballFieldResolver.queries,
         ...pickupGamesResolver.queries,
