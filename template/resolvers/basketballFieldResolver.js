@@ -6,6 +6,4 @@ module.exports = {
         basketballField: (parent, args, context) => { return context.fieldServices.getBasketballFieldById(args.id) }
     },
 
-
-
 };

@@ -1,4 +1,4 @@
 module.exports = `
-    createPlayer(name: String!): Player!
+    createPlayer(input: PlayerInput!): Player!
     updatePlayer(id: ID! name: String! playedGames: [String!]!): Player!
 `;
