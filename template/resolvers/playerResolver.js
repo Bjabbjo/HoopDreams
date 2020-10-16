@@ -3,9 +3,9 @@ module.exports = {
     queries: {
         allPlayers: (parent, args, context) => { return context.db.Players.find({})},
         player: (parent, args, context) => { 
-            const player = context.db.Players.findById(args.id)
-            console.log(player.playedGames);
-            if (player.playedGames === undefined) { player.playedGames = []; }
+            const player = context.db.Players.find(x => x.id == args.id)
+            console.log(player);
+            if (typeof(player.playedGames === undefined)) { player.playedGames = []; }
             return player
         },
     },

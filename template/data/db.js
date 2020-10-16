@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const pickupGamesSchema = require("./schemas/pickupGame");
 const playerSchema = require("./schemas/player");
 
-const connection = mongoose.createConnection('mongodb+srv://BasicUser:VEFT_Pass@items.mnlf6.mongodb.net/HoopDreams', { 
+const connection = mongoose.createConnection('mongodb+srv://BasicUser:VEFT_Pass@items.kfw9r.mongodb.net/DreamHoop?retryWrites=true&w=majority', { 
         useNewUrlParser: true,
         useUnifiedTopology: true    
     });
