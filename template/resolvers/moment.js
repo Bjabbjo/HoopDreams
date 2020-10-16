@@ -14,15 +14,22 @@ module.exports = {
         name: "Moment",
         description: "Moment Scalar Type",
         serialize(value){
-            if (moment(value).isValid()){
-                const ret = new Date(value);
-                //const formattedDate = moment(value).format("llll").locale("is");
-                return ret.toISOString()
-            }
-            return null
+            return value.getTime();
         },
         parseValue(value){
-            return returnOnError(() => value == null ? null : new Date(value), null);
+            //return returnOnError(() => value == null ? null : moment(value), null);
+            moment.locale("is");
+            moment.format("llll");
+            try {
+                if (value != null & moment(value).isValid()){
+                    const a = moment(value);
+                    return a.toISOString()
+                }
+                return null
+            }
+            catch(e){
+                throw e
+            }
         },
         parseLiteral(ast){
             if (ast.kind === Kind.INT) {
