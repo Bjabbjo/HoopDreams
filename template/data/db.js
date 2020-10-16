@@ -12,7 +12,6 @@ const connection = mongoose.createConnection('mongodb+srv://BasicUser:VEFT_Pass@
 const PickupGames = connection.model('PickupGames', pickupGamesSchema, 'PickupGames');
 const Players = connection.model('Players', playerSchema, 'Players');
 
-
 module.exports = {
     connection,
     PickupGames,
