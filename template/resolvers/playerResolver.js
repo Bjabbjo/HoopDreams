@@ -5,13 +5,12 @@ module.exports = {
         player: (parent, args, context) => { 
             const player = context.db.Players.findById(args.id)
             console.log(player.playedGames);
-            if (player.playedGames == undefined) { player.playedGames = []; }
+            if (player.playedGames === undefined) { player.playedGames = []; }
             return player
         },
     },
 
     mutations: {
-
         createPlayer: (parent, args, context) => {
             //const id = args.input.name.toLowerCase().replace(' ','-');
             //const playedGames = [];
@@ -21,7 +20,7 @@ module.exports = {
                 playedGames: []
             };
             console.log(newPlayer);
-            //db.player.push(newPlayer);
+            db.Players.create(newPlayer);
             return newPlayer;
         }
 
