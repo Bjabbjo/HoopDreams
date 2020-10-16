@@ -7,8 +7,27 @@ module.exports = {
     },
 
     mutations: {
-        /*createPlayer,
-        updatePlayer,
-        removePlayer*/
+
+        // createPlayer: (parent, args, context) => {
+        //     const newPlayer = {
+        //         name = args.input.player,
+        //         playedGames = 0
+        //     }
+        //     return context.db.Players.push(newPlayer)
+        //     return true
+        // },
+
+        // updatePlayer: (parent, args, context) => {
+        //     const changePlayer = {
+        //         name = args.input.player,
+        //         playedGames = args.input.playedGames
+        //     }
+        //     return context.db.Players.push(changePlayer)
+        // },
+
+        //removePlayer: (parent, args, context) => {
+            //context.db.PickupGames = context.db.PickupGames.filter(c => x.id != args.id);
+            //return true
+        //}
     }
 }
