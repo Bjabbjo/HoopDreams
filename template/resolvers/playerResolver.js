@@ -1,16 +1,11 @@
-const { concatenateTypeDefs } = require("apollo-server");
-const { Players } = require("../data/db");
-const { match } = require("../schema");
 
 module.exports = {
     Player: {
-        playedGames: (parent, arguments, context) => {
-            const games = [];
-            console.log(parent);
-            console.log(context.db.Players);
-            for (match in parent.playedGames) {
-                const obj = context.db.pickupGames.findById(match);
-                games.push(obj);
+        playedGames: (parent, args, context) => {
+            var games = [];
+            for (i in parent.playedGames) {
+                var thing = context.db.PickupGames.findById(parent.playedGames[i]);
+                games.push(thing);
             }
             return games;
         }
@@ -19,14 +14,14 @@ module.exports = {
     queries: {
         allPlayers: (parent, args, context) => {return context.db.Players.find({})},
         player: (parent, args, context) => { 
-            const player = context.db.Players.findById(args.id);
+            var player = context.db.Players.findById(args.id);
             return player
         },
     },
 
     mutations: {
         createPlayer: (parent, args, context) => {
-            const newPlayer = {
+            var newPlayer = {
                 name: args.input.name,
                 playedGames: [ ]
             };
