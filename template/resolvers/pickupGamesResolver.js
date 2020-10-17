@@ -1,3 +1,4 @@
+const moment = require("moment");
 
 module.exports = 
 {
@@ -26,7 +27,7 @@ module.exports =
     },
 
     mutations: {
-        createPickupGame: (parent, args, context) => { 
+        createPickupGame: async(parent, args, context) => { 
             /*  (x) Pickup games cannot be added to a basketball field which has a status of closed
                 (x) Pickup games cannot overlap if they are being played in the same basketball field
                 (x) Players which are registered as hosts to pickup games should automatically be added as a
@@ -36,8 +37,8 @@ module.exports =
                 (x) Pickup games can be at max 2 hours, but a minimum of 5 minutes
             */
 
-            const field = context.fieldService.getBasketballFieldById(args.location);
-            console.log(field.status);
+            const field = context.fieldServices.getBasketballFieldById(args.location);
+            console.log("field status", field.status);
             if (field.status == "CLOSED"){
                 return new Error("FIELD CLOSED")
             }
@@ -67,12 +68,12 @@ module.exports =
             }
         },
         
-        removePickupGame: (parent, args, context) => {
+        removePickupGame: async(parent, args, context) => {
             context.db.PickupGames = context.db.PickupGames.findOneAndDelete({ _id: args.id }).exec();
             return true
         },
         
-        addPlayerToPickupGame: (parent, args, context) => { 
+        addPlayerToPickupGame:  async(parent, args, context) => { 
             /*  (x) Players cannot be added to pickup games that have already passed
                 (x) Players cannot be added to pickup games, if the maximum capacity has been reached for
                     that basketball field
@@ -81,15 +82,12 @@ module.exports =
             */      
             var player;
             var game;
-            try {
-                player = context.db.Players.find(x => x.id == args.input.playerId);
-                game = context.db.PickupGames.find(y => y.id == args.pickupGameId);
-            } catch {
-                return false;
-            }
-            if (game.end < moment()) { return false }
-            if (game.registeredPlayers.length == game.location.capacity) { return false }
-            if (game.registeredPlayers.includes(player)) { return false }
+            await context.db.Players.findById(args.playerId, function(err, x) { player = x; });
+            await context.db.PickupGames.findById(args.pickupGameId, function(err, x) { game = x; });
+
+            if (game.end < moment()) { return new Error("Game has passed") }
+            if (game.registeredPlayers.length == game.location.capacity) { return new Error("Maximum amount of players") }
+            if (game.registeredPlayers.includes(player)) { return new Error("Player already listed") }
             
             for (pg in context.db.pickupGames) {
                 if (pg != game) {
@@ -98,13 +96,14 @@ module.exports =
                     }
                 }
             }
+            
+            await context.db.Players.findOneAndUpdate({ _id: args.playerId },  { playedGames: player.playedGames }).exec();
+            await context.db.PickupGames.findOneAndUpdate({ _id: args.pickupGameId },{ registeredPlayers: game.registeredPlayers }).exec();
 
-            game.registeredPlayers.add(player);
-            player.playedGames.add(game);
             return true
         },
         /*
-        removePlayerFromPickupGame: (parent, args, context => { 
+        removePlayerFromPickupGame: async(parent, args, context => { 
             /*  • Players cannot be removed from pickup games that have already passed
                 • If a player which is a host in a pickup game is deleted, the first (in alphabetical order)
                   registered player should be assigned as the new host or if the pickup game has no

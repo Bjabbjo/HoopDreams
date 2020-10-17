@@ -7,7 +7,6 @@ const getAllBasketballFields = async() => {
             res(body)
         });
     })
-    console.log(result);
     return JSON.parse(result)
 }
 
