@@ -1,5 +1,5 @@
 module.exports = `
     createPlayer(input: PlayerInput!): Player!
-    updatePlayer(id: ID! name: String! playedGames: [String!]!): Player!
+    updatePlayer(id: ID! name: String playedGames: [String!]): Player!
     removePlayer(id: ID!): Boolean!
 `;
