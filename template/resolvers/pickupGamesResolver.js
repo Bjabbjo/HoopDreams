@@ -96,8 +96,8 @@ module.exports =
                 }
             }
             
-            await context.db.Players.findOneAndUpdate({ _id: args.playerId },  { playedGames: player.playedGames }).exec();
-            await context.db.PickupGames.findOneAndUpdate({ _id: args.pickupGameId },{ registeredPlayers: game.registeredPlayers }).exec();
+            //await context.db.Players.findOneAndUpdate({ _id: args.playerId },  { playedGames: player.playedGames }).exec();
+            //await context.db.PickupGames.findOneAndUpdate({ _id: args.pickupGameId },{ registeredPlayers: game.registeredPlayers }).exec();
 
             return true
         },
