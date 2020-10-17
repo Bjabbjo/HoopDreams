@@ -39,20 +39,20 @@ module.exports =
             const field = context.fieldService.getBasketballFieldById(args.location);
             console.log(field.status);
             if (field.status == "CLOSED"){
-                return false
+                return new Error("FIELD CLOSED")
             }
             else {
                 const start = args.input.start;
                 const end = args.input.end;
 
                 for (game in context.db.pickupGames) {
-                    if (game.start < start && game.end > start) { return false }
+                    if (game.start < start && game.end > start) { return new Error("OVERLAP") }
                 }
 
-                if (start > end) { return false }                       // start is before end
-                if (start.add(5, 'minute') > end )     { return false } // game is less than 5 minutes
-                if (start.add(2, 'hours') < end )      { return false } // game is more than 2 hours
-                if (moment() > end & moment() > start) { return false } // start and endis in the past
+                if (start > end) { return new Error("Start time must be at least 5 minutes before End time") }                       // start is before end
+                if (start.add(5, 'minute') > end )     { return new Error("Game length must be longer than 5 minutes") } // game is less than 5 minutes
+                if (start.add(2, 'hours') < end )      { return new Error("Game length must be shorter than 2 hours") } // game is more than 2 hours
+                if (moment() > end & moment() > start) { return new Error("Start and End times can't be in the past") } // start and endis in the past
                 
                 const host = context.db.Players.find(x => x.id == id);
                 const newPickupGame = {

@@ -1,4 +1,4 @@
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer, extendResolversFromInterfaces } = require('apollo-server');
 const typeDefs = require("./schema"); // routes to index.js by default
 const resolvers = require("./resolvers"); // Setup later (resolvers)
 
@@ -22,6 +22,12 @@ const server = new ApolloServer({
     formatError: (err) => {
         if (err.message.startsWith("Cast to ObjectId failed for value")) {
             return new e.NotFoundError;
+        }
+        else if (err.message.startsWith("OVERLAP")) {
+            return new e.PickupGameOverlapError;
+        }
+        else if (err.message.startsWith("FIELD CLOSED")) {
+            return new e.BasketballFieldClosedError;
         }
         return err;
     }
