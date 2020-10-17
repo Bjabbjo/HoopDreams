@@ -8,12 +8,12 @@ module.exports =
             return context.fieldServices.getBasketballFieldById(id);
         },
         registeredPlayers: (parent, args, context) => {
-            var players = [];
+            var p = [];
             for (i in parent.registeredPlayers) {
                 var thing = context.db.Players.findById(parent.registeredPlayers[i]);
-                players.push(thing);
+                p.push(thing);
             }
-            return players;
+            return p;
         },
         host: (parent, args, context) => {
             const id = parent.host;
@@ -38,7 +38,6 @@ module.exports =
             */
 
             const field = context.fieldServices.getBasketballFieldById(args.location);
-            console.log("field status", field.status);
             if (field.status == "CLOSED"){
                 return new Error("FIELD CLOSED")
             }

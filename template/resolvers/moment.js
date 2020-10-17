@@ -15,7 +15,6 @@ module.exports = {
         description: "Moment Scalar Type",
         serialize(value){
             moment.locale("is")
-            console.log("date", value)
             var thing;
             if (typeof(value) == "string") { thing = new Date(value)}
             else { thing = value }
