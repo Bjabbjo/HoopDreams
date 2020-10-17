@@ -6,8 +6,14 @@ const playerMutations = require("../schema/mutations/playerMutations");
 //const pickupGameMutations = require("../schema/mutations/pickupGameMutations");
 
 module.exports = {
+    Moment: {
+        ...moment.Moment
+    },
     Player: {
         ...playerResolver.Player
+    },
+    PickupGame: {
+        ...pickupGamesResolver.PickupGame
     },
     Query: {
         ...basketballFieldResolver.queries,
@@ -17,8 +23,5 @@ module.exports = {
     Mutation: {
         ...playerResolver.mutations,
         ...pickupGamesResolver.mutations
-    },
-    Moment: {
-        ...moment
     }
 }

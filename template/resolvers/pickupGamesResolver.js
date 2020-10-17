@@ -1,6 +1,25 @@
 
 module.exports = 
 {
+    PickupGame: {
+        location: (parent, args, context) => {
+            const id = parent.location;
+            return context.fieldServices.getBasketballFieldById(id);
+        },
+        registeredPlayers: (parent, args, context) => {
+            var players = [];
+            for (i in parent.registeredPlayers) {
+                var thing = context.db.Players.findById(parent.registeredPlayers[i]);
+                players.push(thing);
+            }
+            return players;
+        },
+        host: (parent, args, context) => {
+            const id = parent.host;
+            return context.db.Players.findById(id);
+        }
+    },
+
     queries: {
         allPickupGames: (parent, args, context) => { return context.db.PickupGames.find({}) },
         pickupGame: (parent, args, context) => { return context.db.PickupGames.findById(args.id) }
@@ -49,7 +68,7 @@ module.exports =
         },
         
         removePickupGame: (parent, args, context) => {
-            context.db.PickupGames = context.db.PickupGames.find(x => x.id == args.id).remove().exec();
+            context.db.PickupGames = context.db.PickupGames.findOneAndDelete({ _id: args.id }).exec();
             return true
         },
         
