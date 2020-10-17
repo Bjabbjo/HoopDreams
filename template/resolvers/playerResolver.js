@@ -27,16 +27,16 @@ module.exports = {
             
         },
 
-        updatePlayer: (parent, args, context) => {
-            var player = context.db.Players.findById(args.id);
-            if (args.name != player.name) {  context.db.Players.findOneAndUpdate({ _id: args.id }, { name: args.name })}
-            if (args.playedGames != player.playedGames) { context.db.Players.findOneAndUpdate({ _id: args.id }, { playedGames: args.playedGames })}
-            return context.db.Players.findById(args.id);
+        updatePlayer: async(parent, args, context) => {
+            var player = await context.db.Players.findById(args.id);
+            if (args.name != player.name) { context.db.Players.update({ _id: args.id }, { $set: { name: args.name }})}
+            if (args.playedGames != player.playedGames) { context.db.Players.update({ _id: args.id }, { $set: { playedGames: args.playedGames }})}
+            return await context.db.Players.findById(args.id);
         },
 
-        // removePlayer: (parent, args, context) => {
-        //     context.db.PickupGames = context.db.PickupGames.filter(c => x.id != args.id);
-        //     return true
-        // }
+        removePlayer: async(parent, args, context) => {
+            await context.db.PickupGames.delete_one({ _id: args.id });
+            return true
+        }
     }
 }
