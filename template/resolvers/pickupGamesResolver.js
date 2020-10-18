@@ -51,10 +51,10 @@ module.exports =
                     if (game.start < start && game.end > start) { return new Error("OVERLAP") }
                 }
 
-                if (start > end) { return new Error("Start time must be at least 5 minutes before End time") }           // start is before end
-                if (start.add(5, 'minute') > end )     { return new Error("Game length must be longer than 5 minutes") } // game is less than 5 minutes
-                if (start.add(2, 'hours') < end )      { return new Error("Game length must be shorter than 2 hours") }  // game is more than 2 hours
-                if (moment() > end & moment() > start) { return new Error("Start and End times can't be in the past") }  // start and endis in the past
+                if (start > end) { return new Error("OVERLAP") }           // start is before end
+                if (start.add(5, 'minute') > end )     { return new Error("OVERLAP") } // game is less than 5 minutes
+                if (start.add(2, 'hours') < end )      { return new Error("OVERLAP") }  // game is more than 2 hours
+                if (moment() > end & moment() > start) { return new Error("OVERLAP") }  // start and endis in the past
                 
                 const hostObject = await context.db.Players.findById(args.input.hostId);
                 let hostObjectId = new ObjectId(hostObject._id);
@@ -108,8 +108,8 @@ module.exports =
             const player = await context.db.Players.findById(playerId);
             const game = await context.db.PickupGames.findById(gameId);
 
-            if (game.end < moment()) { return new Error("Game has passed") }
-            if (game.registeredPlayers.length == game.location.capacity) { return new Error("Maximum amount of players") }
+            if (game.end < moment()) { return new Error("PASSED") }
+            if (game.registeredPlayers.length == game.location.capacity) { return new Error("EXCEED") }
             if (game.registeredPlayers.includes(playerId)) { return new Error("Player already registered in this game") }
             
             for (pg in context.db.pickupGames) {
@@ -145,7 +145,7 @@ module.exports =
             const game = await context.db.PickupGames.findById(gameId);
 
             if (!game.registeredPlayers.includes(playerId)) { return new Error("Player is not registered in this game") } 
-            if (game.end < moment()) { return new Error("Game has already passed") }
+            if (game.end < moment()) { return new Error("PASSED") }
             
             if (game.host == playerId) {
                 var names = [];

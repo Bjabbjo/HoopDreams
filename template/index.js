@@ -30,6 +30,12 @@ const server = new ApolloServer({
         else if (err.message.startsWith("FIELD CLOSED")) {
             return new e.BasketballFieldClosedError;
         }
+        else if (err.message.startsWith("EXCEED")) {
+            return new e.PickupGameExceedMaximumError;
+        }
+        else if (err.message.startsWith("PASSED")) {
+            return new e.PickupGameAlreadyPassedError;
+        }
         return err;
     }
 });
