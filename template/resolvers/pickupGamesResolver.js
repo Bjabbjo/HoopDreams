@@ -110,13 +110,13 @@ module.exports =
 
             if (game.end < moment()) { return new Error("PASSED") }
             if (game.registeredPlayers.length == game.location.capacity) { return new Error("EXCEED") }
-            if (game.registeredPlayers.includes(playerId)) { return new Error("Player already registered in this game") }
+            if (game.registeredPlayers.includes(playerId)) { return new Error("REGISTER") }
             
             for (pg in context.db.pickupGames) {
                 if (pg._id != game._id) {
                     if (pg.registeredPlayers.includes(playerId)) {
                         if (pg.start.isBetween(game.start, game.end) || pg.end.isBetween(game.start, game.end)) { 
-                            return new Error("Player is registered in another game at the same time") 
+                            return new Error("REGISTER") 
                         }
                     }
                 }
@@ -144,7 +144,7 @@ module.exports =
             const player = await context.db.Players.findById(playerId);
             const game = await context.db.PickupGames.findById(gameId);
 
-            if (!game.registeredPlayers.includes(playerId)) { return new Error("Player is not registered in this game") } 
+            if (!game.registeredPlayers.includes(playerId)) { return new Error("REGISTER") } 
             if (game.end < moment()) { return new Error("PASSED") }
             
             if (game.host == playerId) {

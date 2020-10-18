@@ -36,6 +36,12 @@ const server = new ApolloServer({
         else if (err.message.startsWith("PASSED")) {
             return new e.PickupGameAlreadyPassedError;
         }
+        else if (err.message.startsWith("LAST PLAYER")) {
+            return new e.GameDeletedError;
+        }
+        else if (err.message.startsWith("REGISTER")) {
+            return new e.PlayerRegisterError;
+        }
         return err;
     }
 });
