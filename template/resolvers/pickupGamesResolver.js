@@ -86,30 +86,53 @@ module.exports =
 
             if (game.end < moment()) { return new Error("Game has passed") }
             if (game.registeredPlayers.length == game.location.capacity) { return new Error("Maximum amount of players") }
-            if (game.registeredPlayers.includes(player)) { return new Error("Player already listed") }
+            if (game.registeredPlayers.includes(args.playerId)) { return new Error("Player already registered in this game") }
             
             for (pg in context.db.pickupGames) {
                 if (pg != game) {
-                    if (pg.registeredPlayers.includes(player)) {
-                        if (pg.start.isBetween(game.start, game.end) || pg.end.isBetween(game.start, game.end)) { return false }
+                    if (pg.registeredPlayers.includes(args.playerId)) {
+                        if (pg.start.isBetween(game.start, game.end) || pg.end.isBetween(game.start, game.end)) { 
+                            return new Error("Player is registered in another game at the same time") 
+                        }
                     }
                 }
             }
+            player.playedGames.push(game);
+            game.registeredPlayers.push(player);
             
+            console.log(player.playedGames);
+            console.log(game.registeredPlayers);
+
             //await context.db.Players.findOneAndUpdate({ _id: args.playerId },  { playedGames: player.playedGames }).exec();
-            //await context.db.PickupGames.findOneAndUpdate({ _id: args.pickupGameId },{ registeredPlayers: game.registeredPlayers }).exec();
+            //await context.db.PickupGames.findOneAndUpdate({ _id: args.pickupGameId }, { registeredPlayers: game.registeredPlayers }).exec();
 
             return true
         },
-        /*
-        removePlayerFromPickupGame: async(parent, args, context => { 
+
+        removePlayerFromPickupGame: async(parent, args, context) => { 
             /*  • Players cannot be removed from pickup games that have already passed
                 • If a player which is a host in a pickup game is deleted, the first (in alphabetical order)
                   registered player should be assigned as the new host or if the pickup game has no
                   registered players the pickup game should be marked as deleted
                 • Players cannot be removed from a pickup game they are not currently registered in
-             
+            */
+            const playerId = args.input.playerId
+            const gameId = args.input.gameId
+            console.log(playerId, gameId);
+
+            const player = context.db.Players.findById(playerId, function(err, x) { return x });
+            const game = context.db.PickupGames.findById(gameId, function(err, x) { return x });
+
+            if (!game.registeredPlayers.includes(playerId)) { return new Error("Player is not registered in this game") } 
+            if (game.end < moment()) { return new Error("Game has already passed") }
+            
+            if (game.host == playerId) {
+                //game.registeredPlayers
+            }
+
+            context.db.pickupGames.update({ _id: gameId }, { $pull: { registeredPlayers: { _id: playerId } } }).exec();
+
             return true 
-        }) */
+        } 
     }
 };
