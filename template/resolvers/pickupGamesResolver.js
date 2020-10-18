@@ -103,10 +103,12 @@ module.exports =
            const playerId = args.input.playerId;
            const gameId = args.input.pickupGameId
 
-           if (! await context.db.Players.exists(playerId) || ! await context.db.PickupGame.exists(gameId) ) { return new Error("NOT FOUND"); } 
+           if (! await context.db.Players.exists({ _id: playerId }) || ! await context.db.PickupGames.exists({ _id: gameId }) ) { return new Error("NOT FOUND"); } 
             
-            const player = await context.db.Players.findById(playerId);
-            const game = await context.db.PickupGames.findById(gameId);
+            const player = await context.db.Players.findOne({ _id: playerId });
+            const game = await context.db.PickupGames.findOne({ _id: gameId });
+
+            console.log(playerId, "is in", game.registeredPlayers, ":", game.registeredPlayers.includes(playerId));
 
             if (game.end < moment()) { return new Error("PASSED") }
             if (game.registeredPlayers.length == game.location.capacity) { return new Error("EXCEED") }
@@ -147,22 +149,30 @@ module.exports =
             if (!game.registeredPlayers.includes(playerId)) { return new Error("REGISTER") } 
             if (game.end < moment()) { return new Error("PASSED") }
             
+            // remove player from registered players
+            const playerArr = game.registeredPlayers.filter(function(item){return item != playerId});
+            await context.db.PickupGames.updateOne({_id: gameId}, { registeredPlayers: playerArr }, function(err, data){}).exec();
+
+            // remove game from played games
+            const gameArr = player.playedGames.filter(function(item){return item != gameId});
+            await context.db.Players.updateOne({_id: playerId}, { playedGames: gameArr }, function(err, data){} ).exec();
+
+
             if (game.host == playerId) {
-                if (game.registeredPlayers.length == 1) { 
-                    await self.removePickupGame(parent, { id: game._id }, context); 
+                if (playerArr.length == 0) { 
+                    await removePickupGame(parent, { id: game._id }, context); 
                     return new Error("LAST PLAYER");
                 }
                 else {
                     var names = [];
                     
                     // Get names and id's of all registered players, other than our player
-                    for (p in game.registeredPlayers) {
-                        if (game.registeredPlayers[p] != player._id) {
-                            const regPlayers = game.registeredPlayers;
+                    for (p in playerArr) {
+                        if (playerArr[p] != player._id) {
+
+                            const regPlayers = playerArr;
                             const player = await context.db.Players.findById(regPlayers[p]);
-                            pName = player.name;
-                            pId = player._id;
-                            names.push( { pName: pId } );
+                            names.push( { pName: player.name, pId: player._id } )
                         }
                     }
                     
@@ -174,18 +184,10 @@ module.exports =
                     });
                     
                     // set new host id
-                    await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].id })
+                    await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].pId })
                 }                
 
             }
-            // remove player from registered players
-            const playerArr = game.registeredPlayers.filter(function(item){return item != playerId});
-            await context.db.PickupGames.updateOne({_id: gameId}, { registeredPlayers: playerArr }, function(err, data){}).exec();
-
-            // remove game from played games
-            const gameArr = player.playedGames.filter(function(item){return item != gameId});
-            await context.db.Players.updateOne({_id: playerId}, { playedGames: gameArr }, function(err, data){} ).exec();
-            
             return true 
         }
     }

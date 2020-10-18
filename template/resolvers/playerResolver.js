@@ -53,28 +53,28 @@ module.exports = {
                 await context.db.PickupGames.updateOne({ _id: games[g] }, { registeredPlayers: regPlayers });
             }
 
+            console.log("is host is these games:", hostInGames);
+
             for (g in hostInGames) {
                 var names = [];
                 var game = hostInGames[g];
                 
-                for (p in game.registeredPlayers) {
-                    if (game.registeredPlayers[p] != player._id)
+                regPlayers = regPlayers.filter(function(item){ return item != args.id });
+
+                for (p in regPlayers) {
+                    if (regPlayers[p] != player._id)
                     {
-                        const tmpPlayers = game.registeredPlayers;
-                        const player = await context.db.Players.findById(tmpPlayers[p]);
-                        pName = player.name;
-                        pId = player._id;
-                        names.push( { pName: pId } )
+                        const player = await context.db.Players.findById(regPlayers[p]);
+                        names.push( { pName: player.name, pId: player._id } )
                     }
                 }
 
                 names.sort(function(a, b){
                     if (a.pName < b.pName)      { return -1 }
-                    else if (a.pName > b.pName) {return 1}
+                    else if (a.pName > b.pName) { return 1  }
                     return 0;
                 });
-
-                await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].id })
+                await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].pId })
             }
 
             await context.db.Players.findOneAndDelete({ _id: args.id }).exec();

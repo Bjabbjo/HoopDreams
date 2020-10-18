@@ -9,7 +9,7 @@ module.exports = {
             moment.locale("is");
 
             var thing;
-            if (typeof(value) == "string") { thing = new Date(value)}
+            if (typeof(value) == "string") { thing = new Date(value) }
             else { thing = value }
 
             const tmp = thing.toISOString()
@@ -22,7 +22,6 @@ module.exports = {
             return null;
         },
         parseValue(value){
-            console.log(value)
             moment.locale("is");
 
             var thing;
@@ -39,8 +38,10 @@ module.exports = {
             
         },
         parseLiteral(ast){
+            moment.locale("is");
             if (ast.kind === Kind.STRING) {
-                return moment(ast.value)
+                const time = moment(ast.value)
+                if (time.isValid()) { return time.format("llll") }
             }
             return null
         }
