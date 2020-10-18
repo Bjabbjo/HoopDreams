@@ -78,7 +78,6 @@ module.exports =
         removePickupGame: async(parent, args, context) => {
             if (! await context.db.PickupGames.exists({ _id: args.id })) { return new Error("NOT FOUND") }
             const game = await context.db.PickupGames.findById( args.id );
-            console.log(game);
             const players = game.registeredPlayers;
 
             // removes the game from played Games in players
