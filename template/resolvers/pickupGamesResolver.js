@@ -79,17 +79,18 @@ module.exports =
                 (x) Players cannot be registered more than once to the same pickup game
                 (x) Players cannot be registered to two pickup games that overlap
             */      
-            var player;
-            var game;
-            await context.db.Players.findById(args.playerId, function(err, x) { player = x; });
-            await context.db.PickupGames.findById(args.pickupGameId, function(err, x) { game = x; });
+           const playerId = args.input.playerId;
+           const gameId = args.input.pickupGameId
+            
+            const player = await context.db.Players.findById(playerId);
+            const game = await context.db.PickupGames.findById(gameId);
 
             if (game.end < moment()) { return new Error("Game has passed") }
             if (game.registeredPlayers.length == game.location.capacity) { return new Error("Maximum amount of players") }
-            if (game.registeredPlayers.includes(args.playerId)) { return new Error("Player already registered in this game") }
+            if (game.registeredPlayers.includes(playerId)) { return new Error("Player already registered in this game") }
             
             for (pg in context.db.pickupGames) {
-                if (pg != game) {
+                if (pg._id != game._id) {
                     if (pg.registeredPlayers.includes(args.playerId)) {
                         if (pg.start.isBetween(game.start, game.end) || pg.end.isBetween(game.start, game.end)) { 
                             return new Error("Player is registered in another game at the same time") 
@@ -97,14 +98,12 @@ module.exports =
                     }
                 }
             }
-            player.playedGames.push(game);
-            game.registeredPlayers.push(player);
-            
-            console.log(player.playedGames);
-            console.log(game.registeredPlayers);
 
-            //await context.db.Players.findOneAndUpdate({ _id: args.playerId },  { playedGames: player.playedGames }).exec();
-            //await context.db.PickupGames.findOneAndUpdate({ _id: args.pickupGameId }, { registeredPlayers: game.registeredPlayers }).exec();
+            player.playedGames.push(game._id);
+            game.registeredPlayers.push(player._id);
+
+            await context.db.Players.updateOne({ _id: playerId }, { playedGames: player.playedGames }).exec();
+            await context.db.PickupGames.updateOne({ _id: gameId }, { registeredPlayers: game.registeredPlayers }).exec();
 
             return true
         },
@@ -129,8 +128,11 @@ module.exports =
                 //game.registeredPlayers
             }
 
-            await context.db.PickupGames.update({ _id: gameId }, { $pull: { registeredPlayers: gameId } }).exec();
-            await context.db.Players.update({ _id: gameId }, { $pull: { playedGames: gameId }}).exec();
+            const playerArr = game.registeredPlayers.filter(function(item){return item != playerId});
+            const gameArr = player.playedGames.filter(function(item){return item != gameId});
+            
+            await context.db.PickupGames.updateOne({_id: gameId}, { registeredPlayers: playerArr }, function(err, data){}).exec();
+            await context.db.Players.updateOne({_id: playerId}, { playedGames: gameArr }, function(err, data){} ).exec();
 
             return true 
         } 
