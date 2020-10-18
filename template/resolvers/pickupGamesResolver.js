@@ -50,9 +50,9 @@ module.exports =
                 for (game in context.db.pickupGames) {
                     if (game.start < start && game.end > start) { return new Error("OVERLAP") }
                 }
-
-                if (start > end) { return new Error("OVERLAP") }           // start is before end
-                if (start.add(5, 'minute') > end )     { return new Error("OVERLAP") } // game is less than 5 minutes
+                
+                if (start > end) { return new Error("OVERLAP") }                        // start is before end
+                if (start.add(5, 'minute') > end )     { return new Error("OVERLAP") }  // game is less than 5 minutes
                 if (start.add(2, 'hours') < end )      { return new Error("OVERLAP") }  // game is more than 2 hours
                 if (moment() > end & moment() > start) { return new Error("OVERLAP") }  // start and endis in the past
                 
@@ -94,12 +94,7 @@ module.exports =
         },
         
         addPlayerToPickupGame:  async(parent, args, context) => { 
-            /*  (x) Players cannot be added to pickup games that have already passed
-                (x) Players cannot be added to pickup games, if the maximum capacity has been reached for
-                    that basketball field
-                (x) Players cannot be registered more than once to the same pickup game
-                (x) Players cannot be registered to two pickup games that overlap
-            */      
+                 
            const playerId = args.input.playerId;
            const gameId = args.input.pickupGameId
 
@@ -108,8 +103,7 @@ module.exports =
             const player = await context.db.Players.findOne({ _id: playerId });
             const game = await context.db.PickupGames.findOne({ _id: gameId });
 
-            console.log(playerId, "is in", game.registeredPlayers, ":", game.registeredPlayers.includes(playerId));
-
+            
             if (game.end < moment()) { return new Error("PASSED") }
             if (game.registeredPlayers.length == game.location.capacity) { return new Error("EXCEED") }
             if (game.registeredPlayers.includes(playerId)) { return new Error("REGISTER") }
@@ -134,12 +128,7 @@ module.exports =
         },
 
         removePlayerFromPickupGame: async(parent, args, context) => { 
-            /*  • Players cannot be removed from pickup games that have already passed
-                • If a player which is a host in a pickup game is deleted, the first (in alphabetical order)
-                  registered player should be assigned as the new host or if the pickup game has no
-                  registered players the pickup game should be marked as deleted
-                • Players cannot be removed from a pickup game they are not currently registered in
-            */
+            
             const playerId = args.input.playerId
             const gameId = args.input.pickupGameId
 

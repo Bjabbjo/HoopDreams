@@ -53,7 +53,6 @@ module.exports = {
                 await context.db.PickupGames.updateOne({ _id: games[g] }, { registeredPlayers: regPlayers });
             }
 
-            console.log("is host is these games:", hostInGames);
 
             for (g in hostInGames) {
                 var names = [];
