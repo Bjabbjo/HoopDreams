@@ -38,6 +38,43 @@ module.exports = {
         },
 
         removePlayer: async(parent, args, context) => {
+            if (! await context.db.Players.exists({ _id: args.id })) { return new Error("NOT FOUND") }
+
+            const player = await context.db.Players.findById(args.id);
+            const games = player.playedGames;
+
+            var hostInGames = [];
+            for (g in games) {
+                var tmp = await context.db.PickupGames.findById(games[g]);
+                if (tmp.host == args.id) { hostInGames.push(tmp) }
+                var regPlayers = tmp.registeredPlayers;
+                regPlayers = regPlayers.filter(function(item){ return item != args.id });
+                await context.db.PickupGames.updateOne({ _id: games[g] }, { registeredPlayers: regPlayers });
+            }
+
+            for (g in hostInGames) {
+                var names = [];
+                var game = hostInGames[g];
+                
+                for (p in game.registeredPlayers) {
+                    if (game.registeredPlayers[p] != player._id)
+                    {
+                        const player = await context.db.Players.findById(game.registeredPlayers[p]);
+                        pName = player.name;
+                        pId = player._id;
+                        names.push( { pName: pId } )
+                    }
+                }
+
+                names.sort(function(a, b){
+                    if (a.pName < b.pName)      { return -1 }
+                    else if (a.pName > b.pName) {return 1}
+                    return 0;
+                });
+
+                await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].id })
+            }
+
             await context.db.Players.findOneAndDelete({ _id: args.id }).exec();
             return true
         }

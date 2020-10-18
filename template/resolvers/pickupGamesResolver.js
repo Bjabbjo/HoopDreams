@@ -145,7 +145,25 @@ module.exports =
             if (game.end < moment()) { return new Error("Game has already passed") }
             
             if (game.host == playerId) {
-                //game.registeredPlayers
+                var names = [];
+                
+                for (p in game.registeredPlayers) {
+                    if (game.registeredPlayers[p] != player._id)
+                    {
+                        const player = await context.db.Players.findById(game.registeredPlayers[p]);
+                        pName = player.name;
+                        pId = player._id;
+                        names.push( { pName: pId } )
+                    }
+                }
+
+                names.sort(function(a, b){
+                    if (a.pName < b.pName)      { return -1 }
+                    else if (a.pName > b.pName) {return 1}
+                    return 0;
+                });
+
+                await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].id })
             }
 
             const playerArr = game.registeredPlayers.filter(function(item){return item != playerId});
