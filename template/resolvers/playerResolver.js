@@ -60,7 +60,8 @@ module.exports = {
                 for (p in game.registeredPlayers) {
                     if (game.registeredPlayers[p] != player._id)
                     {
-                        const player = await context.db.Players.findById(game.registeredPlayers[p]);
+                        const tmpPlayers = game.registeredPlayers;
+                        const player = await context.db.Players.findById(tmpPlayers[p]);
                         pName = player.name;
                         pId = player._id;
                         names.push( { pName: pId } )
