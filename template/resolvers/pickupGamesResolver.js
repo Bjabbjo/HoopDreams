@@ -1,4 +1,5 @@
 const moment = require("moment");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = 
 {
@@ -36,8 +37,9 @@ module.exports =
                 (x) Pickup games that have an end date which comes before the start date cannot be created
                 (x) Pickup games can be at max 2 hours, but a minimum of 5 minutes
             */
+            if (! await context.db.Players.exists({ _id: args.input.hostId })) { return new Error("NOT FOUND"); }
 
-            const field = context.fieldServices.getBasketballFieldById(args.location);
+            const field = await context.fieldServices.getBasketballFieldById(args.input.basketballFieldId);
             if (field.status == "CLOSED"){
                 return new Error("FIELD CLOSED")
             }
@@ -49,27 +51,30 @@ module.exports =
                     if (game.start < start && game.end > start) { return new Error("OVERLAP") }
                 }
 
-                if (start > end) { return new Error("Start time must be at least 5 minutes before End time") }                       // start is before end
+                if (start > end) { return new Error("Start time must be at least 5 minutes before End time") }           // start is before end
                 if (start.add(5, 'minute') > end )     { return new Error("Game length must be longer than 5 minutes") } // game is less than 5 minutes
-                if (start.add(2, 'hours') < end )      { return new Error("Game length must be shorter than 2 hours") } // game is more than 2 hours
-                if (moment() > end & moment() > start) { return new Error("Start and End times can't be in the past") } // start and endis in the past
+                if (start.add(2, 'hours') < end )      { return new Error("Game length must be shorter than 2 hours") }  // game is more than 2 hours
+                if (moment() > end & moment() > start) { return new Error("Start and End times can't be in the past") }  // start and endis in the past
                 
-                const host = context.db.Players.find(x => x.id == id);
+                let hostObjectId = new ObjectId(args.input.hostId);
                 const newPickupGame = {
                     start: args.input.start,
                     end: args.input.start,
-                    location: args.input.location,
-                    registeredPlayers: [host],
-                    host: args.input.host
+                    location: args.input.basketballFieldId,
+                    registeredPlayers: [hostObjectId],
+                    host: hostObjectId
                 }
 
-                return context.db.PickupGames.create(newPickupGame)
+                return await context.db.PickupGames.create(newPickupGame);
             }
         },
         
         removePickupGame: async(parent, args, context) => {
-            context.db.PickupGames = context.db.PickupGames.findOneAndDelete({ _id: args.id }).exec();
-            return true
+            if (context.db.PickupGames.exists({ _id: args.id })) {
+                await context.db.PickupGames.deleteOne({ _id: args.id }).exec();
+                return true
+            }
+            return new Error("NOT FOUND")
         },
         
         addPlayerToPickupGame:  async(parent, args, context) => { 
@@ -91,7 +96,7 @@ module.exports =
             
             for (pg in context.db.pickupGames) {
                 if (pg._id != game._id) {
-                    if (pg.registeredPlayers.includes(args.playerId)) {
+                    if (pg.registeredPlayers.includes(playerId)) {
                         if (pg.start.isBetween(game.start, game.end) || pg.end.isBetween(game.start, game.end)) { 
                             return new Error("Player is registered in another game at the same time") 
                         }

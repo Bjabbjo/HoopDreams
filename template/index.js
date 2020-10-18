@@ -20,7 +20,8 @@ const server = new ApolloServer({
     },
 
     formatError: (err) => {
-        if (err.message.startsWith("Cast to ObjectId failed for value")) {
+        if (err.message.startsWith("Cast to ObjectId failed for value") |
+            err.message.startsWith("NOT FOUND")) {
             return new e.NotFoundError;
         }
         else if (err.message.startsWith("OVERLAP")) {

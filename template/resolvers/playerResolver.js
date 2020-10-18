@@ -29,10 +29,10 @@ module.exports = {
 
         updatePlayer: async(parent, args, context) => {
             if (typeof(args.name) != "undefined") { 
-                context.db.Players.findOneAndUpdate({ _id: args.id }, { name: args.name }).exec();
+                await context.db.Players.findOneAndUpdate({ _id: args.id }, { name: args.name }).exec();
             }
             if (typeof(args.playedGames) != "undefined") {
-                context.db.Players.findOneAndUpdate({ _id: args.id },{ playedGames: args.playedGames }).exec()
+                await context.db.Players.findOneAndUpdate({ _id: args.id },{ playedGames: args.playedGames }).exec()
             }
             return await context.db.Players.findById(args.id);
         },
