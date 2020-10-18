@@ -149,7 +149,7 @@ module.exports =
             
             if (game.host == playerId) {
                 if (game.registeredPlayers.length == 1) { 
-                    self.removePickupGame(parent, { id: game._id }, context); 
+                    await self.removePickupGame(parent, { id: game._id }, context); 
                     return new Error("LAST PLAYER");
                 }
                 else {
