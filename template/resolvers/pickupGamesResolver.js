@@ -148,34 +148,44 @@ module.exports =
             if (game.end < moment()) { return new Error("Game has already passed") }
             
             if (game.host == playerId) {
-                var names = [];
-                
-                for (p in game.registeredPlayers) {
-                    if (game.registeredPlayers[p] != player._id)
-                    {
-                        const player = await context.db.Players.findById(game.registeredPlayers[p]);
-                        pName = player.name;
-                        pId = player._id;
-                        names.push( { pName: pId } )
-                    }
+                if (game.registeredPlayers.length == 1) { 
+                    self.removePickupGame(parent, { id: game._id }, context); 
+                    return new Error("LAST PLAYER");
                 }
+                else {
+                    var names = [];
+                    
+                    // Get names and id's of all registered players, other than our player
+                    for (p in game.registeredPlayers) {
+                        if (game.registeredPlayers[p] != player._id) {
+                            const player = await context.db.Players.findById(game.registeredPlayers[p]);
+                            pName = player.name;
+                            pId = player._id;
+                            names.push( { pName: pId } )
+                        }
+                    }
+                    
+                    // sort names
+                    names.sort(function(a, b) {
+                        if (a.pName < b.pName)      { return -1 }
+                        else if (a.pName > b.pName) {return 1}
+                        return 0;
+                    });
+                    
+                    // set new host id
+                    await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].id })
+                }                
 
-                names.sort(function(a, b){
-                    if (a.pName < b.pName)      { return -1 }
-                    else if (a.pName > b.pName) {return 1}
-                    return 0;
-                });
-
-                await context.db.PickupGames.updateOne({ _id: game._id }, { host: names[0].id })
             }
-
+            // remove player from registered players
             const playerArr = game.registeredPlayers.filter(function(item){return item != playerId});
-            const gameArr = player.playedGames.filter(function(item){return item != gameId});
-            
             await context.db.PickupGames.updateOne({_id: gameId}, { registeredPlayers: playerArr }, function(err, data){}).exec();
-            await context.db.Players.updateOne({_id: playerId}, { playedGames: gameArr }, function(err, data){} ).exec();
 
+            // remove game from played games
+            const gameArr = player.playedGames.filter(function(item){return item != gameId});
+            await context.db.Players.updateOne({_id: playerId}, { playedGames: gameArr }, function(err, data){} ).exec();
+            
             return true 
-        } 
+        }
     }
 };
