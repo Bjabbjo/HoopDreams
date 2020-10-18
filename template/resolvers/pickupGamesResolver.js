@@ -117,11 +117,10 @@ module.exports =
                 • Players cannot be removed from a pickup game they are not currently registered in
             */
             const playerId = args.input.playerId
-            const gameId = args.input.gameId
-            console.log(playerId, gameId);
+            const gameId = args.input.pickupGameId
 
-            const player = context.db.Players.findById(playerId, function(err, x) { return x });
-            const game = context.db.PickupGames.findById(gameId, function(err, x) { return x });
+            const player = await context.db.Players.findById(playerId);
+            const game = await context.db.PickupGames.findById(gameId);
 
             if (!game.registeredPlayers.includes(playerId)) { return new Error("Player is not registered in this game") } 
             if (game.end < moment()) { return new Error("Game has already passed") }
@@ -130,7 +129,8 @@ module.exports =
                 //game.registeredPlayers
             }
 
-            context.db.pickupGames.update({ _id: gameId }, { $pull: { registeredPlayers: { _id: playerId } } }).exec();
+            await context.db.PickupGames.update({ _id: gameId }, { $pull: { registeredPlayers: gameId } }).exec();
+            await context.db.Players.update({ _id: gameId }, { $pull: { playedGames: gameId }}).exec();
 
             return true 
         } 

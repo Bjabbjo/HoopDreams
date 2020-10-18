@@ -9,7 +9,6 @@ const connection = mongoose.createConnection('mongodb+srv://BasicUser:VEFT_Pass@
         useFindAndModify: false
     });
 
-//const BasketballFields = connection.model('BasketballFields', basketballFieldSchema, 'BasketballFields');
 const PickupGames = connection.model('PickupGames', pickupGamesSchema, 'PickupGames');
 const Players = connection.model('Players', playerSchema, 'Players');
 
