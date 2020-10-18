@@ -28,6 +28,7 @@ module.exports = {
         },
 
         updatePlayer: async(parent, args, context) => {
+            if (! await context.db.Players.exists(args.id) ) { return new Error("NOT FOUND"); }
             if (typeof(args.name) != "undefined") { 
                 await context.db.Players.findOneAndUpdate({ _id: args.id }, { name: args.name }).exec();
             }

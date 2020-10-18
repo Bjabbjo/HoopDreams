@@ -77,6 +77,7 @@ module.exports =
         
         removePickupGame: async(parent, args, context) => {
             if (! await context.db.PickupGames.exists({ _id: args.id })) { return new Error("NOT FOUND") }
+
             const game = await context.db.PickupGames.findById( args.id );
             const players = game.registeredPlayers;
 
@@ -101,6 +102,8 @@ module.exports =
             */      
            const playerId = args.input.playerId;
            const gameId = args.input.pickupGameId
+
+           if (! await context.db.Players.exists(playerId) || ! await context.db.PickupGame.exists(gameId) ) { return new Error("NOT FOUND"); } 
             
             const player = await context.db.Players.findById(playerId);
             const game = await context.db.PickupGames.findById(gameId);
