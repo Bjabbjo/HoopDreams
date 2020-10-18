@@ -56,7 +56,8 @@ module.exports =
                 if (start.add(2, 'hours') < end )      { return new Error("Game length must be shorter than 2 hours") }  // game is more than 2 hours
                 if (moment() > end & moment() > start) { return new Error("Start and End times can't be in the past") }  // start and endis in the past
                 
-                let hostObjectId = new ObjectId(args.input.hostId);
+                const hostObject = await context.db.Players.findById(args.input.hostId);
+                let hostObjectId = new ObjectId(hostObject._id);
                 const newPickupGame = {
                     start: args.input.start,
                     end: args.input.start,
@@ -64,17 +65,32 @@ module.exports =
                     registeredPlayers: [hostObjectId],
                     host: hostObjectId
                 }
+                const newGame = await context.db.PickupGames.create(newPickupGame);
+                
+                hostObject.playedGames.push(newGame._id);
+                await context.db.Players.updateOne({ _id: hostObject._id }, { playedGames: hostObject.playedGames });
 
-                return await context.db.PickupGames.create(newPickupGame);
+                return newGame
+
             }
         },
         
         removePickupGame: async(parent, args, context) => {
-            if (context.db.PickupGames.exists({ _id: args.id })) {
-                await context.db.PickupGames.deleteOne({ _id: args.id }).exec();
-                return true
+            if (! await context.db.PickupGames.exists({ _id: args.id })) { return new Error("NOT FOUND") }
+            const game = await context.db.PickupGames.findById( args.id );
+            console.log(game);
+            const players = game.registeredPlayers;
+
+            // removes the game from played Games in players
+            for (p in players) {
+                var tmp = await context.db.Players.findById(players[p]);
+                var playedGames = tmp.playedGames;
+                playedGames = playedGames.filter(function(item){ return item != args.id });
+                await context.db.Players.updateOne({ _id: players[p] }, { playedGames: playedGames });
             }
-            return new Error("NOT FOUND")
+
+            await context.db.PickupGames.deleteOne({ _id: args.id }).exec();
+            return true
         },
         
         addPlayerToPickupGame:  async(parent, args, context) => { 
