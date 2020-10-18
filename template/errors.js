@@ -30,7 +30,7 @@ class PickupGameAlreadyPassedError extends ApolloError {
         this.name = 'PickupGameAlreadyPassedError';
         this.code = 400;
     }
-}
+};
 
 class NotFoundError extends ApolloError {
     constructor(message = 'Id was not found') {
@@ -38,7 +38,23 @@ class NotFoundError extends ApolloError {
         this.name = 'NotFoundError';
         this.code = 404;
     }
-}
+};
+
+class GameDeletedError extends ApolloError {
+    constructor(message = 'Pickup Game deleted') {
+        super(message, null, null);
+        this.name = 'GameDeletedError';
+        this.code = 400;
+    }
+};
+
+class PlayerRegisterError extends ApolloError {
+    constructor(message = 'Player registration error') {
+        super(message, null, null);
+        this.name = 'GameDeletedError';
+        this.code = 400;
+    }
+};
 
 module.exports = {
     PickupGameExceedMaximumError,
@@ -46,5 +62,7 @@ module.exports = {
     PickupGameOverlapError,
     PickupGameAlreadyPassedError,
     NotFoundError,
+    GameDeletedError,
+    PlayerRegisterError,
     UserInputError
 };
