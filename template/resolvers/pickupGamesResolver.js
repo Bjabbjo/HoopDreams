@@ -158,17 +158,18 @@ module.exports =
                     // Get names and id's of all registered players, other than our player
                     for (p in game.registeredPlayers) {
                         if (game.registeredPlayers[p] != player._id) {
-                            const player = await context.db.Players.findById(game.registeredPlayers[p]);
+                            const regPlayers = game.registeredPlayers;
+                            const player = await context.db.Players.findById(regPlayers[p]);
                             pName = player.name;
                             pId = player._id;
-                            names.push( { pName: pId } )
+                            names.push( { pName: pId } );
                         }
                     }
                     
                     // sort names
                     names.sort(function(a, b) {
                         if (a.pName < b.pName)      { return -1 }
-                        else if (a.pName > b.pName) {return 1}
+                        else if (a.pName > b.pName) { return 1  }
                         return 0;
                     });
                     
